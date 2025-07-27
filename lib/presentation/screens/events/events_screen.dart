@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import 'event_details_screen.dart';
+import 'models/event_model.dart';
 
 class EventsScreen extends StatelessWidget {
   const EventsScreen({super.key});
@@ -46,29 +49,13 @@ class EventsScreen extends StatelessWidget {
             const SizedBox(height: 16),
             
             // Event Cards
-            _buildEventCard(
-              title: 'Концерт в амфитеатре',
-              description: 'Вечернее шоу с национальной музыкой',
-              date: '22 ДЕК',
-              time: '20:00',
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: 12),
-            _buildEventCard(
-              title: 'Фестиваль фонтанов',
-              description: 'Световое представление у фонтанов',
-              date: '25 ДЕК',
-              time: '19:30',
-              color: const Color(0xFF2196F3),
-            ),
-            const SizedBox(height: 12),
-            _buildEventCard(
-              title: 'Новогодний гала',
-              description: 'Праздничный банкет и развлечения',
-              date: '31 ДЕК',
-              time: '21:00',
-              color: const Color(0xFFE91E63),
-            ),
+            ...sampleEvents.map((event) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildEventCard(
+                context,
+                event: event,
+              ),
+            )),
             
             const SizedBox(height: 24),
             
@@ -89,13 +76,7 @@ class EventsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEventCard({
-    required String title,
-    required String description,
-    required String date,
-    required String time,
-    required Color color,
-  }) {
+  Widget _buildEventCard(BuildContext context, {required EventModel event}) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -111,7 +92,21 @@ class EventsScreen extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            print('🎯 Нажата карточка мероприятия: ${event.title}');
+            HapticFeedback.lightImpact();
+            try {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventDetailsScreen(event: event),
+                ),
+              );
+              print('✅ Навигация выполнена успешно');
+            } catch (e) {
+              print('❌ Ошибка навигации: $e');
+            }
+          },
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -121,27 +116,13 @@ class EventsScreen extends StatelessWidget {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: event.color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        date.split(' ')[0],
-                        style: AppTypography.labelSmall.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        date.split(' ')[1],
-                        style: AppTypography.labelSmall.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
+                  child: Icon(
+                    event.icon,
+                    color: event.color,
+                    size: 28,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -150,18 +131,24 @@ class EventsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        event.title,
                         style: AppTypography.titleSmall.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.secondary,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        description,
+                        event.description.length > 60 
+                          ? '${event.description.substring(0, 60)}...'
+                          : event.description,
                         style: AppTypography.bodySmall.copyWith(
                           color: AppColors.grey600,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -173,7 +160,7 @@ class EventsScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            time,
+                            event.dateTime,
                             style: AppTypography.labelSmall.copyWith(
                               color: AppColors.grey600,
                             ),
@@ -195,6 +182,41 @@ class EventsScreen extends StatelessWidget {
       ),
     );
   }
+
+  static final List<EventModel> sampleEvents = [
+    EventModel(
+      title: 'Большой музыкальный вечер в Амфитеатре Вечного города',
+      dateTime: '7 июня, 19:30',
+      description: '7 июня в 19:30 на сцене амфитеатра Вечного города выступят всемирно известные коллективы Хор Турецкого & Soprano с программой «Песни Победы». Вас ждет незабываемый вечер живой музыки, ярких эмоций и любимых композиций, которые объединят поколения. Погрузитесь в атмосферу вдохновения и радости вместе с семьей и друзьями!',
+      location: 'Амфитеатр Вечного города, Silk Road Samarkand',
+      color: const Color(0xFF1565C0),
+      icon: Icons.music_note,
+    ),
+    EventModel(
+      title: 'Фестиваль фонтанов',
+      dateTime: '25 декабря, 19:30',
+      description: 'Грандиозное световое и музыкальное шоу у знаменитых фонтанов комплекса. Уникальное представление, которое объединяет водные струи, современную подсветку и классическую музыку.',
+      location: 'Центральная площадь, Silk Road Samarkand',
+      color: const Color(0xFF2196F3),
+      icon: Icons.water_drop,
+    ),
+    EventModel(
+      title: 'Новогодний гала',
+      dateTime: '31 декабря, 21:00',
+      description: 'Встретьте Новый год в роскошной атмосфере восточного гостеприимства! Праздничный банкет, живая музыка, развлекательная программа и незабываемая атмосфера.',
+      location: 'Главный банкетный зал, Silk Road Samarkand',
+      color: const Color(0xFFE91E63),
+      icon: Icons.celebration,
+    ),
+    EventModel(
+      title: 'Мастер-класс традиционных ремесел',
+      dateTime: '15 января, 15:00',
+      description: 'Познакомьтесь с древними традициями узбекского ремесла. Научитесь работать с керамикой, ткацким станком и создавать украшения в национальном стиле.',
+      location: 'Мастерская ремесел, Silk Road Samarkand',
+      color: AppColors.primary,
+      icon: Icons.palette,
+    ),
+  ];
 
   Widget _buildCategoryGrid() {
     final categories = [
