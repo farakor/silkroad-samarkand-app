@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../hotels/hotels_screen.dart';
 import '../eco_village/eco_village_screen.dart';
+import '../events/event_details_screen.dart';
+import '../events/models/event_model.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -87,9 +90,30 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildEventsCarousel() {
     final events = [
-      EventItem('Концерт в амфитеатре', 'Вечернее шоу с национальной музыкой', '22 ДЕК'),
-      EventItem('Фестиваль фонтанов', 'Световое представление у фонтанов', '25 ДЕК'),
-      EventItem('Новогодний гала', 'Праздничный банкет и развлечения', '31 ДЕК'),
+      EventModel(
+        title: 'Большой музыкальный вечер в Амфитеатре Вечного города',
+        dateTime: '7 июня, 19:30',
+        description: '7 июня в 19:30 на сцене амфитеатра Вечного города выступят всемирно известные коллективы Хор Турецкого & Soprano с программой «Песни Победы».',
+        location: 'Амфитеатр Вечного города, Silk Road Samarkand',
+        color: const Color(0xFF1565C0),
+        icon: Icons.music_note,
+      ),
+      EventModel(
+        title: 'Фестиваль фонтанов',
+        dateTime: '25 декабря, 19:30',
+        description: 'Грандиозное световое и музыкальное шоу у знаменитых фонтанов комплекса.',
+        location: 'Центральная площадь, Silk Road Samarkand',
+        color: const Color(0xFF2196F3),
+        icon: Icons.water_drop,
+      ),
+      EventModel(
+        title: 'Новогодний гала',
+        dateTime: '31 декабря, 21:00',
+        description: 'Встретьте Новый год в роскошной атмосфере восточного гостеприимства!',
+        location: 'Главный банкетный зал, Silk Road Samarkand',
+        color: const Color(0xFFE91E63),
+        icon: Icons.celebration,
+      ),
     ];
 
     return Container(
@@ -112,78 +136,94 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                children: [
-                  // Background gradient (placeholder for image)
-                  Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppColors.primary.withOpacity(0.7),
-                          AppColors.secondary.withOpacity(0.8),
-                        ],
-                      ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  print('🎯 Нажата карточка на главном экране: ${event.title}');
+                  HapticFeedback.lightImpact();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EventDetailsScreen(event: event),
                     ),
-                  ),
-                  // Content overlay
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            AppColors.black.withOpacity(0.6),
-                          ],
+                  );
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Stack(
+                    children: [
+                      // Background gradient (placeholder for image)
+                      Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              event.color.withOpacity(0.7),
+                              event.color.withOpacity(0.9),
+                            ],
+                          ),
                         ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(4),
+                      // Content overlay
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                AppColors.black.withOpacity(0.6),
+                              ],
                             ),
-                            child: Text(
-                              event.date,
-                              style: AppTypography.labelSmall.copyWith(
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w600,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: event.color,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  event.dateTime,
+                                  style: AppTypography.labelSmall.copyWith(
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 8),
+                              Text(
+                                event.title,
+                                style: AppTypography.titleMedium.copyWith(
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                event.description,
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: AppColors.white.withOpacity(0.9),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            event.title,
-                            style: AppTypography.titleMedium.copyWith(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            event.description,
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.white.withOpacity(0.9),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           );
@@ -399,13 +439,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class EventItem {
-  final String title;
-  final String description;
-  final String date;
-
-  EventItem(this.title, this.description, this.date);
-}
+// EventItem класс больше не нужен, используем EventModel
 
 class SectionItem {
   final String title;
