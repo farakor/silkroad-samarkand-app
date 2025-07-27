@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../hotels/hotels_screen.dart';
 import '../eco_village/eco_village_screen.dart';
+import '../restaurants/restaurants_screen.dart';
 import '../events/event_details_screen.dart';
 import '../events/models/event_model.dart';
 
@@ -292,7 +293,12 @@ class _MainScreenState extends State<MainScreen> {
         );
         break;
       case 'Рестораны':
-        // TODO: Navigate to restaurants screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RestaurantsScreen(),
+          ),
+        );
         break;
       case 'SPA & Wellness':
         // TODO: Navigate to spa screen
