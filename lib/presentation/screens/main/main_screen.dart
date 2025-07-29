@@ -13,6 +13,7 @@ import '../events/event_details_screen.dart';
 import '../events/events_screen.dart';
 import '../events/models/event_model.dart';
 import '../spa_wellness/spa_wellness_screen.dart';
+import '../transfers/transfers_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -226,6 +227,7 @@ class _MainScreenState extends State<MainScreen> {
       SectionItem('Eco Village', Icons.nature, const Color(0xFF4CAF50)),
       SectionItem('Рестораны', Icons.restaurant, const Color(0xFFE91E63)),
       SectionItem('SPA & Wellness', Icons.spa, const Color(0xFF9C27B0)),
+      SectionItem('Трансферы', Icons.directions_bus, const Color(0xFF3F51B5)),
       SectionItem('Развлечения', Icons.celebration, const Color(0xFFFF9800)),
       SectionItem('Concierge услуги', Icons.room_service, const Color(0xFF795548)),
       SectionItem('Мероприятия', Icons.business_center, const Color(0xFF607D8B)),
@@ -304,6 +306,14 @@ class _MainScreenState extends State<MainScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => const SpaWellnessScreen(),
+          ),
+        );
+        break;
+      case 'Трансферы':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const TransfersScreen(),
           ),
         );
         break;
