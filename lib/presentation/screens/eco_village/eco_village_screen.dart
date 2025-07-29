@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import 'villa_details_screen.dart';
+import 'models/villa_test_data.dart';
 
 class EcoVillageScreen extends StatelessWidget {
   const EcoVillageScreen({super.key});
@@ -126,7 +129,7 @@ class EcoVillageScreen extends StatelessWidget {
                 itemCount: _villas.length,
                 itemBuilder: (context, index) {
                   final villa = _villas[index];
-                  return _buildVillaCard(villa);
+                  return _buildVillaCard(context, villa);
                 },
               ),
             ),
@@ -166,118 +169,139 @@ class EcoVillageScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVillaCard(Villa villa) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Villa Image
-          Expanded(
-            flex: 2,
-            child: Container(
-              height: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
-                ),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    villa.color.withOpacity(0.7),
-                    villa.color.withOpacity(0.9),
-                  ],
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
-                ),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            villa.color.withOpacity(0.6),
-                            villa.color.withOpacity(0.8),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Icon(
-                        Icons.villa,
-                        size: 36,
-                        color: AppColors.white.withOpacity(0.9),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+  Widget _buildVillaCard(BuildContext context, Villa villa) {
+    // Находим соответствующую виллу в VillaTestData
+    final villaData = VillaTestData.allVillas.firstWhere(
+      (v) => v.name == villa.name,
+      orElse: () => VillaTestData.executiveVilla,
+    );
+    
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VillaDetailsScreen(villa: villaData),
             ),
+          );
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withOpacity(0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          
-          // Villa Info
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Villa name
-                  Text(
-                    villa.name,
-                    style: AppTypography.titleMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.secondary,
+          child: Row(
+            children: [
+              // Villa Image
+              Expanded(
+                flex: 2,
+                child: Container(
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        villa.color.withOpacity(0.7),
+                        villa.color.withOpacity(0.9),
+                      ],
+                    ),
                   ),
-                  
-                  const SizedBox(height: 8),
-                  
-                  // Guests info
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.people,
-                        size: 18,
-                        color: Colors.amber.shade600,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        villa.guestInfo,
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: AppColors.secondary,
-                          fontWeight: FontWeight.w600,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
+                    ),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                villa.color.withOpacity(0.6),
+                                villa.color.withOpacity(0.8),
+                              ],
+                            ),
+                          ),
                         ),
+                        Center(
+                          child: Icon(
+                            Icons.villa,
+                            size: 36,
+                            color: AppColors.white.withOpacity(0.9),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              
+              // Villa Info
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Villa name
+                      Text(
+                        villa.name,
+                        style: AppTypography.titleMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.secondary,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      
+                      const SizedBox(height: 8),
+                      
+                      // Guests info
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.people,
+                            size: 18,
+                            color: Colors.amber.shade600,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            villa.guestInfo,
+                            style: AppTypography.bodyMedium.copyWith(
+                              color: AppColors.secondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

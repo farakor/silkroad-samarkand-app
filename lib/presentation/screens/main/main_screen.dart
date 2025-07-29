@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../hotels/hotels_screen.dart';
 import '../eco_village/eco_village_screen.dart';
+import '../eternal_city/eternal_city_screen.dart';
 import '../restaurants/restaurants_screen.dart';
 import '../events/event_details_screen.dart';
+import '../events/events_screen.dart';
 import '../events/models/event_model.dart';
+import '../spa_wellness/spa_wellness_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -35,30 +39,11 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.white,
         elevation: 0,
-        title: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.mosque,
-                color: AppColors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Silkroad Samarkand',
-              style: AppTypography.titleLarge.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.secondary,
-              ),
-            ),
-          ],
+        title: SvgPicture.asset(
+          'assets/images/stc-logo-arka.svg',
+          width: 40,
+          height: 40,
+          fit: BoxFit.contain,
         ),
         actions: [
           IconButton(
@@ -237,6 +222,7 @@ class _MainScreenState extends State<MainScreen> {
     final sections = [
       SectionItem('События', Icons.event, AppColors.primary),
       SectionItem('Отели', Icons.hotel, const Color(0xFF2196F3)),
+      SectionItem('Вечный город', Icons.location_city, const Color(0xFFFF6B35)),
       SectionItem('Eco Village', Icons.nature, const Color(0xFF4CAF50)),
       SectionItem('Рестораны', Icons.restaurant, const Color(0xFFE91E63)),
       SectionItem('SPA & Wellness', Icons.spa, const Color(0xFF9C27B0)),
@@ -255,7 +241,7 @@ class _MainScreenState extends State<MainScreen> {
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 1.4,
+          childAspectRatio: 1.2,
         ),
         itemCount: sections.length,
         itemBuilder: (context, index) {
@@ -282,7 +268,20 @@ class _MainScreenState extends State<MainScreen> {
         );
         break;
       case 'События':
-        // TODO: Navigate to events screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const EventsScreen(),
+          ),
+        );
+        break;
+      case 'Вечный город':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const EternalCityScreen(),
+          ),
+        );
         break;
       case 'Eco Village':
         Navigator.push(
@@ -301,7 +300,12 @@ class _MainScreenState extends State<MainScreen> {
         );
         break;
       case 'SPA & Wellness':
-        // TODO: Navigate to spa screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SpaWellnessScreen(),
+          ),
+        );
         break;
       case 'Развлечения':
         // TODO: Navigate to entertainment screen

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
@@ -171,25 +172,11 @@ class _InterestsScreenState extends State<InterestsScreen>
                             child: FadeInAnimation(
                               child: Column(
                                 children: [
-                                  Container(
+                                  SvgPicture.asset(
+                                    'assets/images/stc-logo-horiz.svg',
                                     width: 80,
                                     height: 80,
-                                    decoration: BoxDecoration(
-                                      gradient: AppColors.primaryGradient,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: AppColors.primary.withOpacity(0.3),
-                                          blurRadius: 20,
-                                          offset: const Offset(0, 8),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Icon(
-                                      Icons.interests,
-                                      size: 40,
-                                      color: AppColors.white,
-                                    ),
+                                    fit: BoxFit.contain,
                                   ),
                                   const SizedBox(height: 24),
                                   Text(
